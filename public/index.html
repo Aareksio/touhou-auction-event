@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="Boost your inventory value on our crazy multipliers, catch one of our unique events for even more fun!">
+  <meta name="robots" content="index,follow">
+  <meta name="google" content="notranslate">
+  <meta name="format-detection" content="telephone=no">
+
+  <title>Touhou Auction Event</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+      font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .header {
+      width: 100%;
+      display: flex;
+      height: 3em;
+      border-bottom: solid 1px rgba(0,0,0,0.25);
+      justify-content: space-between;
+      padding: 0 2em;
+      box-sizing: border-box;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .login, .logout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1em;
+    }
+
+    main {
+      padding: 1em 2em;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <header class="header">
+    <div class="brand">
+      <h1 class="brand__name">Touhou Giveaways Auctions</h1>
+    </div>
+
+    <a href="/login" class="login" v-if="!steamid">
+      <img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png">
+    </a>
+    <a href="/logout" class="logout" v-if="steamid">
+      Logout
+    </a>
+  </header>
+  <main>
+    <template v-if="steamid && !exists">
+      <p>You have {{ startingCredits }} credits remaining</p>
+    </template>
+    <div class="user" v-if="steamid && exists">
+      <p>You have {{ credits }} credits remaining</p>
+
+      <p>You have won following giveaways:</p>
+      <ul>
+        <li v-for="giveaway in giveaways" :key="giveaway.id"><a :href="`https://www.steamgifts.com/giveaway/${giveaway.id}/`" target="_blank">{{ `https://www.steamgifts.com/giveaway/${giveaway.id}/` }} - {{ giveaway.bid }} credits</a></li>
+      </ul>
+    </div>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!--script src="https://cdn.jsdelivr.net/npm/vue"></script-->
+
+<script>
+  const app = new Vue({
+    el: '#app',
+    data() {
+      return {
+        exists: false,
+        steamid: null,
+        credits: 0,
+        startingCredits: 1000,
+        giveaways: []
+      }
+    },
+    async created() {
+      try {
+        const { exists, steamid, credits, giveaways } = await fetch('/api/user').then(r => r.json());
+        this.exists = exists;
+        this.steamid = steamid;
+        this.credits = credits;
+        this.giveaways = giveaways || [];
+      } catch (err) {}
+    }
+  })
+</script>
+</body>
+</html>
