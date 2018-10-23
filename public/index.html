@@ -70,7 +70,7 @@
 
       <p>You have won following giveaways:</p>
       <ul>
-        <li v-for="giveaway in giveaways" :key="giveaway.id"><a :href="`https://www.steamgifts.com/giveaway/${giveaway.id}/`" target="_blank">{{ `https://www.steamgifts.com/giveaway/${giveaway.id}/` }} - {{ giveaway.bid }} credits</a></li>
+        <li v-for="giveaway in giveaways" :key="giveaway.id"><a :href="`https://www.steamgifts.com/giveaway/${giveaway.id}/`" target="_blank">{{ `https://www.steamgifts.com/giveaway/${giveaway.id}/` }}</a> - {{ giveaway.bid }} credits</li>
       </ul>
     </div>
   </main>

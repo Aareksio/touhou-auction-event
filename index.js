@@ -45,7 +45,7 @@ router.get('/api/user', requireAuth, async ctx => {
     return;
   }
 
-  const giveaways = await db.query('SELECT `giveaway_id` FROM `auction_threads` WHERE `steam_id` = ? AND `status` = 255', [ctx.state.steamid]);
+  const giveaways = await db.query('SELECT `giveaway_id`, `bid` FROM `auction_threads` WHERE `steam_id` = ? AND `status` = 255', [ctx.state.steamid]);
 
   ctx.body = {
     exists: !!user,
