@@ -25,7 +25,7 @@ router.get('/verify', async ctx => {
 
   try {
     const token = await auth.verify(ctx.url);
-    ctx.cookies.set('2hu-event-pass', token);
+    ctx.cookies.set('token', token);
     ctx.redirect('/');
   } catch (err) {
     console.error(err);
@@ -52,13 +52,6 @@ router.get('/api/user', requireAuth, async ctx => {
     steamid: ctx.state.steamid,
     credits: user.credits,
     giveaways: giveaways.map(ga => ({ id: ga.giveaway_id, bid: ga.bid }))
-  };
-});
-
-router.get('/api/test', async ctx => {
-  ctx.body = {
-    token: ctx.cookies.get('token'),
-    '2hu-event-pass': ctx.cookies.get('2hu-event-pass')
   };
 });
 
