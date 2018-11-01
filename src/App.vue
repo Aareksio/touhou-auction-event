@@ -3,7 +3,7 @@
     <header class="header">
       <div class="brand">
         <h1 class="brand__name brand__name--fake">Touhou Giveaways Auctions</h1>
-        <h1 class="brand__name brand__name--real"> Nep Giveaways Auctions</h1>
+        <h1 class="brand__name brand__name--real">&nbsp;&nbsp;&nbsp;Nep Giveaways Auctions</h1>
       </div>
 
       <a href="/login" class="login" v-if="!steamid">
