@@ -47,6 +47,8 @@
 <script>
   import * as humanizeDuration from 'humanize-duration';
 
+  const startingCredits = 2500;
+
   class Thread {
     constructor(data) {
       this.id = data.round_id;
