@@ -3,7 +3,7 @@
     <header class="header">
       <div class="brand">
         <h1 class="brand__name brand__name--fake">Touhou Giveaways Auctions</h1>
-        <h1 class="brand__name brand__name--real">   Nep Giveaways Auctions</h1>
+        <h1 class="brand__name brand__name--real"> Nep Giveaways Auctions</h1>
       </div>
 
       <a href="/login" class="login" v-if="!steamid">
@@ -31,7 +31,7 @@
       <div class="active-threads">
         <p>Currently active threads:</p>
         <transition-group name="thread-list" tag="ul">
-          <li class="thread" v-for="thread in threads" :key="thread.id">#{{ thread.id}} - <a :href="thread.threadURL" target="_blank">visit</a> - {{ thread.bid }} credits - {{ thread.timeAgo }} </li>
+          <li class="thread" v-for="thread in threads" :key="thread.id">#{{ thread.id}} - <a :href="thread.threadURL" target="_blank">visit</a> - {{ thread.bid }} credits - {{ thread.timeAgo }}</li>
         </transition-group>
       </div>
     </main>
@@ -64,7 +64,7 @@
     }
 
     get threadURL() {
-      return `https://www.steamgifts.com/discussion/${this.threadId}`
+      return `https://www.steamgifts.com/discussion/${this.threadId}/`;
     }
   }
 
@@ -80,7 +80,7 @@
         threads: [],
         updateThreadsTimeInterval: null,
         ws: null
-      }
+      };
     },
     watch: {
       theme: {
