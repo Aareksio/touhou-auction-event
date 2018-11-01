@@ -54,11 +54,12 @@
       this.id = data.round_id;
       this.threadId = data.thread_id;
       this.bid = data.bid;
-      this.bidTime = new Date(data.last_bid);
+      this.bidTime = data.last_bid ? new Date(data.last_bid) : null;
       this.timeAgo = this.getTimeAgo();
     }
 
     getTimeAgo() {
+      if (!this.bidTime) return 'no bids yet';
       return humanizeDuration(this.bidTime - Date.now(), { round: true }) + ' ago';
     }
 
