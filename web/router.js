@@ -1,14 +1,9 @@
-const Koa = require('koa');
-const serve = require('koa-static');
 const KoaRouter = require('koa-router');
 
 const auth = require('./auth');
 const db = require('./db');
 const requireAuth = require('./requireAuth');
 
-const config = require('./config');
-
-const app = new Koa();
 const router = new KoaRouter();
 
 router.get('/login', async ctx => {
@@ -33,6 +28,10 @@ router.get('/verify', async ctx => {
   }
 });
 
+router.get('/api/threads', async ctx => {
+  ctx.body = await db.query('SELECT `round_id`, `thread_id`, `bid`, `last_comment_id`, `last_bid` FROM `auction_threads` WHERE `status` != 255');
+});
+
 router.get('/api/user', requireAuth, async ctx => {
   const [user] = await db.query('SELECT `credits` FROM `auction_users` WHERE `steam_id` = ?', [ctx.state.steamid]);
 
@@ -55,7 +54,4 @@ router.get('/api/user', requireAuth, async ctx => {
   };
 });
 
-app.use(serve('public'));
-app.use(router.routes());
-
-app.listen(config.port);
+module.exports = router;
