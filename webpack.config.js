@@ -1,6 +1,5 @@
 const path = require('path');
 const { VueLoaderPlugin } = require('vue-loader');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -14,8 +13,8 @@ module.exports = (env, argv) => {
       main: './src/app.js'
     },
     output: {
-      filename: 'scripts/name.bundle.js',
-      chunkFilename: 'scripts/[id].chunk.js',
+      filename: 'scripts/[name].[chunkhash:7].bundle.js',
+      chunkFilename: 'scripts/[id].[chunkhash:7].chunk.js',
       path: path.resolve(__dirname, 'dist'),
       publicPath: '/'
     },
@@ -66,7 +65,6 @@ module.exports = (env, argv) => {
       ]
     },
     plugins: [
-      new CleanWebpackPlugin(['dist']),
       new VueLoaderPlugin(),
       new CopyWebpackPlugin(['src/static']),
       new HtmlWebpackPlugin({ template: 'src/index.html' })
