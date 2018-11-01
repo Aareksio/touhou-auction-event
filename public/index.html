@@ -172,7 +172,17 @@
         theme: 'dark'
       }
     },
+    watch: {
+      theme: {
+        handler() {
+          localStorage.setItem('auction-theme', this.theme);
+        }
+      }
+    },
     async created() {
+      const theme = localStorage.getItem('auction-theme');
+      if (theme) this.theme = theme;
+
       try {
         const { exists, steamid, credits, giveaways } = await fetch('/api/user', { credentials: 'same-origin' }).then(r => r.json());
         this.exists = exists;
