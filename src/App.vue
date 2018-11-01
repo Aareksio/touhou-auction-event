@@ -123,7 +123,7 @@
         this.threads = threads.map(data => new Thread(data));
       },
       createWSConnection() {
-        this.ws = new WebSocket(`ws://${window.location.host}/ws`);
+        this.ws = new WebSocket(`${window.location.protocol === 'https' ? 'wss' : 'ws'}://${window.location.host}/ws`);
 
         this.ws.addEventListener('message', ({ data }) => {
           const { event, payload } = JSON.parse(data);
