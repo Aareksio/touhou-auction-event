@@ -93,7 +93,7 @@
     },
     async created() {
       try {
-        const { exists, steamid, credits, giveaways } = await fetch('/api/user', { credentials: 'include' }).then(r => r.json());
+        const { exists, steamid, credits, giveaways } = await fetch('/api/user', { credentials: 'same-origin' }).then(r => r.json());
         this.exists = exists;
         this.steamid = steamid;
         this.credits = credits;
