@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require('./config');
 
 module.exports = async (ctx, next) => {
-  const token = ctx.cookies.get('token');
+  const token = ctx.cookies.get('2hu-event-pass') || ctx.cookies.get('token');
   if (!token) return ctx.throw(401, 'Token not present');
 
   try {

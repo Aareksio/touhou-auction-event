@@ -25,7 +25,7 @@ router.get('/verify', async ctx => {
 
   try {
     const token = await auth.verify(ctx.url);
-    ctx.cookies.set('token', token);
+    ctx.cookies.set('2hu-event-pass', token);
     ctx.redirect('/');
   } catch (err) {
     console.error(err);
@@ -55,8 +55,11 @@ router.get('/api/user', requireAuth, async ctx => {
   };
 });
 
-router.get('/api/test', requireAuth, async ctx => {
-  ctx.body = true;
+router.get('/api/test', async ctx => {
+  ctx.body = {
+    token: ctx.cookies.get('token'),
+    '2hu-event-pass': ctx.cookies.get('2hu-event-pass')
+  };
 });
 
 app.use(serve('public'));
