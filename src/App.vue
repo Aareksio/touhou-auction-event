@@ -22,7 +22,7 @@
         <p>Your giveaways:</p>
 
         <transition-group name="list" tag="ul">
-          <li v-for="giveaway in userGiveaways" :key="giveaway.id"><a :href="giveaway.URL" target="_blank">{{ giveaway.URL }}</a> - {{ giveaway.bid }} credits - {{ giveaway.entries }} entries</li>
+          <li v-for="giveaway in userGiveaways" :key="giveaway.id"><a :href="giveaway.URL" target="_blank">{{ giveaway.URL }}</a> - <span v-html="giveaway.bidHTML"></span> credits - <span v-html="giveaway.entriesHTML"></span> entries</li>
         </transition-group>
       </div>
 
@@ -143,18 +143,24 @@
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100vh;
-    background: #111;
-    color: #bbb;
+    background: var(--color-background);
+    color: var(--color-text);
+
+    &.theme-dark {
+      --color-background: #111;
+      --color-text: #bbb;
+      --color-text-disabled: #333;
+    }
+
+    &.theme-light {
+      --color-backgorund: #eee;
+      --color-text: #333;
+      --color-text-disabled: #ddd;
+    }
   }
 
-  #app.theme-dark {
-    background: #111;
-    color: #bbb;
-  }
-
-  #app.theme-light {
-    background: #eee;
-    color: #333;
+  .text-disabled {
+    color: var(--color-text-disabled);
   }
 
   .header {
