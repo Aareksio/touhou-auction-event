@@ -108,7 +108,6 @@
       },
       updateThreadsTIme() {
         this.threads.active.forEach(thread => thread.timeAgo = thread.getTimeAgo());
-        this.threads.archive.forEach(thread => thread.timeAgo = thread.getTimeAgo());
       },
       updateThreads(threads) {
         this.threads = {

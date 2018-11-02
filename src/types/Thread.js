@@ -2,7 +2,7 @@ import * as humanizeDuration from 'humanize-duration';
 
 export class Thread {
   constructor(data) {
-    this.id = data.round_id;
+    this.id = ('' + data.round_id).padStart(3, '0');
     this.threadId = data.thread_id;
     this.bid = data.bid;
     this.bidTime = data.last_bid ? new Date(data.last_bid) : null;
@@ -16,8 +16,12 @@ export class Thread {
     return humanizeDuration(this.bidTime - Date.now(), { round: true }) + ' ago';
   }
 
+  get bidLocaleTime() {
+    return this.bidTime ? `${this.bidTime.toLocaleDateString()} ${this.bidTime.toLocaleTimeString()}` : null;
+  }
+
   get threadURL() {
-    return `https://www.steamgifts.com/discussion/${this.threadId}/?page=999`;
+    return `https://www.steamgifts.com/discussion/${this.threadId}/`;
   }
 
   get winnerURL() {
