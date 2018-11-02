@@ -1,16 +1,13 @@
 const WebSocket = require('ws');
 const db = require('./db');
-
-function getThreads() {
-  return db.query('SELECT `round_id`, `thread_id`, `bid`, `last_comment_id`, `last_bid` FROM `auction_threads` WHERE `status` != 255');
-}
+const segregateThreads = require('./helpers/segregateThreads');
 
 module.exports = function createWSServer(server) {
   const wss = new WebSocket.Server({ server, path: '/ws' });
 
   async function updateThreads() {
-    const activeThreads = await getThreads();
-    const data = JSON.stringify({ event: 'threads', payload: activeThreads });
+    const threads = await db.getThreads();
+    const data = JSON.stringify({ event: 'threads', payload: segregateThreads(threads) });
     wss.clients.forEach(client => client.send(data));
   }
 

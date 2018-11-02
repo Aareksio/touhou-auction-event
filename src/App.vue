@@ -15,23 +15,30 @@
     </header>
 
     <main>
-      <div class="user" v-if="steamid">
-        <p>You are logged in as {{ steamid }} and have {{ credits }} credits remaining.</p>
+      <p v-if="steamid">You are logged in as {{ steamid }} and have {{ credits }} credits remaining.</p>
+      <p v-else>You are not logged in.</p>
 
-        <p v-if="userGiveaways.length">Giveaways you won:</p>
-        <ul v-if="userGiveaways.length">
-          <li v-for="giveaway in userGiveaways" :key="giveaway.id"><a :href="`https://www.steamgifts.com/giveaway/${giveaway.id}/`" target="_blank">{{ `https://www.steamgifts.com/giveaway/${giveaway.id}/` }}</a> - {{ giveaway.bid }} credits</li>
-        </ul>
+      <div class="giveaways" v-if="userGiveaways.length">
+        <p>Your giveaways:</p>
+
+        <transition-group name="list" tag="ul">
+          <li v-for="giveaway in userGiveaways" :key="giveaway.id"><a :href="giveaway.URL" target="_blank">{{ giveaway.URL }}</a> - {{ giveaway.bid }} credits - {{ giveaway.entries }} entries</li>
+        </transition-group>
       </div>
 
-      <div class="user" v-else>
-        You are not logged in.
+      <div class="threads threads--active">
+        <p>Active threads:</p>
+
+        <transition-group name="list" tag="ul">
+          <app-thread :thread="thread" v-for="thread in threads.active" :key="thread.id"></app-thread>
+        </transition-group>
       </div>
 
-      <div class="active-threads">
-        <p>Currently active threads:</p>
-        <transition-group name="thread-list" tag="ul">
-          <li class="thread" v-for="thread in threads" :key="thread.id">#{{ thread.id}} - <a :href="thread.threadURL" target="_blank">visit</a> - {{ thread.bid }} credits - {{ thread.timeAgo }}</li>
+      <div class="threads threads--archive">
+        <p>Archive threads:</p>
+
+        <transition-group name="list" tag="ul">
+          <app-thread :thread="thread" v-for="thread in threads.archive" :key="thread.id"></app-thread>
         </transition-group>
       </div>
     </main>
@@ -43,33 +50,16 @@
     </footer>
   </div>
 </template>
-
 <script>
-  import * as humanizeDuration from 'humanize-duration';
+  import { Thread } from './types/Thread';
+  import { Giveaway } from './types/Giveaway';
+  import AppThread from './components/AppThread.vue';
 
   const startingCredits = 2500;
 
-  class Thread {
-    constructor(data) {
-      this.id = data.round_id;
-      this.threadId = data.thread_id;
-      this.bid = data.bid;
-      this.bidTime = data.last_bid ? new Date(data.last_bid) : null;
-      this.timeAgo = this.getTimeAgo();
-    }
-
-    getTimeAgo() {
-      if (!this.bidTime) return 'no bids yet';
-      return humanizeDuration(this.bidTime - Date.now(), { round: true }) + ' ago';
-    }
-
-    get threadURL() {
-      return `https://www.steamgifts.com/discussion/${this.threadId}/`;
-    }
-  }
-
   export default {
     name: 'App',
+    components: { AppThread },
     data() {
       return {
         exists: false,
@@ -77,7 +67,7 @@
         credits: 0,
         userGiveaways: [],
         theme: 'dark',
-        threads: [],
+        threads: {},
         updateThreadsTimeInterval: null,
         ws: null
       };
@@ -103,24 +93,28 @@
       },
       async loadUser() {
         try {
-          const { exists, steamid, credits, giveaways } = await fetch('/api/user', { credentials: 'same-origin' }).then(r => r.json());
+          const { success, response: { exists, steamid, credits, giveaways } } = await fetch('/api/user', { credentials: 'same-origin' }).then(r => r.json());
           this.exists = exists;
           this.steamid = steamid;
           this.credits = exists ? credits : startingCredits;
-          this.userGiveaways = giveaways || [];
+          this.userGiveaways = (giveaways || []).map(Giveaway.from);
         } catch (err) {}
       },
       async loadThreads() {
         try {
-          const threads = await fetch('/api/threads').then(r => r.json());
-          this.threads = threads.map(data => new Thread(data));
+          const { success, response: threads } = await fetch('/api/threads').then(r => r.json());
+          this.updateThreads(threads);
         } catch (err) {}
       },
       updateThreadsTIme() {
-        this.threads.forEach(thread => thread.timeAgo = thread.getTimeAgo());
+        this.threads.active.forEach(thread => thread.timeAgo = thread.getTimeAgo());
+        this.threads.archive.forEach(thread => thread.timeAgo = thread.getTimeAgo());
       },
       updateThreads(threads) {
-        this.threads = threads.map(data => new Thread(data));
+        this.threads = {
+          active: threads.active.map(Thread.from),
+          archive: threads.archive.map(Thread.from)
+        };
       },
       createWSConnection() {
         this.ws = new WebSocket(`${window.location.protocol.replace('http', 'ws')}//${window.location.host}/ws`);
@@ -133,6 +127,7 @@
     }
   };
 </script>
+
 
 <style lang="scss">
   body {
@@ -238,15 +233,15 @@
     }
   }
 
-  .thread-list-move {
+  .list-move {
     transition: transform .5s;
   }
 
-  .thread-list-enter, .thread-list-leave-to {
+  .list-enter, .list-leave-to {
     opacity: 0;
   }
 
-  .thread-list-enter-active, .thread-list-leave-active {
+  .list-enter-active, .list-leave-active {
     transition: opacity .5s;
   }
 </style>

@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const config = require('./config');
+const config = require('../config');
 
 module.exports = async (ctx, next) => {
   const token = ctx.cookies.get('token') || ctx.cookies.get('token');
